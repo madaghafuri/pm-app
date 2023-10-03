@@ -139,7 +139,7 @@ export default function Authenticated({ user, header, children, workspaceList, p
                         }) : null}
                     </div>
                 </div>
-                <main>{children}</main>
+                <main className='grow'>{children}</main>
             </div>
         </div>
     );
