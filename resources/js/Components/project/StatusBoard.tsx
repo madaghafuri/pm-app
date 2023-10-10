@@ -1,5 +1,5 @@
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { TaskItem } from "./TaskItem";
+import { BlankTask, TaskItem } from "./TaskItem";
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, UniqueIdentifier, useDndMonitor } from "@dnd-kit/core";
 import { useState } from "react";
 import { Status, Task, useProjectContext } from "@/Pages/Project/ProjectContext";
@@ -35,33 +35,37 @@ export function StatusBoard({ taskList, status }: StatusBoardProps) {
         console.log({ active, over });
     }
 
+    useDndMonitor({ onDragStart: handleDragStart, onDragEnd: handleDragEnd, onDragOver: handleDragOver })
+
     return (
-        <DndContext id={status.id} onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver}>
             <div className="p-4 rounded-md hover:outline hover:outline-1 hover:outline-gray-400">
                 <div className="flex mb-5 justify-between items-center">
                     <h1 className="select-none font-bold text-xl">{status.title}</h1>
-                    <div>
-                        <SecondaryButton spacing="xs" className="border-none h-4">
-                            <Plus />
+                    <div className="flex gap-1">
+                        <SecondaryButton spacing="xs" className="border-none">
+                            <Plus className="h-4" />
                         </SecondaryButton>
-                        <SecondaryButton spacing="xs" className="border-none h-4">
-                            <MoreHorizontal />
+                        <SecondaryButton spacing="xs" className="border-none">
+                            <MoreHorizontal className="h-4" />
                         </SecondaryButton>
                     </div>
                 </div>
                 <SortableContext items={taskList} strategy={verticalListSortingStrategy}>
-                    <div className="flex flex-col gap-2">
-                        {taskList.map((value) => 
-                            (
+                    <div className="grid grid-cols-1 gap-2">
+                        {taskList.map((value) => {
+                            if (value.id === activeId) return (
+                                <BlankTask key={value.id} id={value.id} />
+                            )
+
+                            return (
                                 <TaskItem key={value.id} id={value.id} name={value.title} />
                             )
-                        )}
+                        })}
                     </div>
                 </SortableContext>
                 <DragOverlay>
-                    {activeId ? <TaskItem id={activeId as UniqueIdentifier} name={activeTask?.title as string} /> : null}
+                    {activeId ? <TaskItem id={activeId as UniqueIdentifier} name={activeTask?.title as string} className="outline outline-purple-500 outline-offset-0" /> : null}
                 </DragOverlay>
             </div>
-        </DndContext>
     )
 }

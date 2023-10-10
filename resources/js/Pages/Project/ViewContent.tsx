@@ -1,3 +1,4 @@
+import { DndContext } from "@dnd-kit/core";
 import { useProjectContext } from "./ProjectContext";
 import { StatusBoard } from "@/Components/project/StatusBoard";
 
@@ -39,11 +40,13 @@ export function BoardView() {
     return (
         <div className="text-gray-400 bg-gray-800 w-full p-6">
             <div className="flex flex-row">
-                {statusList.map((val, index) => 
-                    (
-                        <StatusBoard key={index} status={val} taskList={taskList} />
-                    )
-                )}
+                <DndContext>
+                    {statusList.map((val, index) => 
+                        (
+                            <StatusBoard key={index} status={val} taskList={taskList} />
+                        )
+                    )}
+                </DndContext>
             </div>
         </div>
     )
