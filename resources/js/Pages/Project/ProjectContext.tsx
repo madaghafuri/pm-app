@@ -1,10 +1,10 @@
 import { Dispatch, PropsWithChildren, SetStateAction, createContext, useContext, useState } from "react";
 
 type ProjectContextType = {
-    statusList: any[];
-    setStatusList: Dispatch<SetStateAction<any[]>>;
-    taskList: any[];
-    setTaskList: Dispatch<SetStateAction<any[]>>;
+    statusList: Status[];
+    setStatusList: Dispatch<SetStateAction<Status[]>>;
+    taskList: Task[];
+    setTaskList: Dispatch<SetStateAction<Task[]>>;
 }
 
 const ProjectContext = createContext<ProjectContextType>({
@@ -14,38 +14,38 @@ const ProjectContext = createContext<ProjectContextType>({
     setTaskList: () => {}
 });
 
-type Status = {
+export type Status = {
     id: string;
     title: string;
 }
 
-type Task = {
+export type Task = {
     id: string;
     title: string;
 }
 
 const StatusList: Status[] = [
     {
-        id: '1',
+        id: '02333776-a7a9-4281-9c12-a1317f3fd73b',
         title: 'To Do'
     },
     {
-        id: '2',
+        id: 'e1844a83-69f4-4bf0-b6c9-8e6854153c2f',
         title: 'Doing'
     },
     {
-        id: '3',
+        id: 'd6f10d70-45cb-4a64-9821-d629b72c1061',
         title: 'Done'
     },
 ];
 
 const TaskList: Task[] = [
     {
-        id: '1',
+        id: 'e0acf7f4-4e45-4c4e-bcef-833a219d4fd9',
         title: 'Doing Things',
     },
     {
-        id: '2',
+        id: 'f80d4b2a-ae65-458e-878e-4a305c0f7f00',
         title: 'Doing another things'
     }
 ]
