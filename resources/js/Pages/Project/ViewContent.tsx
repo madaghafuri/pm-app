@@ -1,7 +1,5 @@
-import PrimaryButton from "@/Components/PrimaryButton";
-import { StatusBoard } from "@/Components/project/StatusBoard";
-import { useState } from "react"
 import { useProjectContext } from "./ProjectContext";
+import { StatusBoard } from "@/Components/project/StatusBoard";
 
 export function ListView() {
     return (
@@ -33,23 +31,19 @@ export function BoardView() {
     const handleNewStatusBoard = () => {
         setStatusList((prev) => {
             const newStatusList = [...prev];
-            newStatusList.push('undefined');
+            newStatusList.push({ id: 'kljasdljaiwdj', title: "Default" });
             return newStatusList;
         })
     }
 
     return (
         <div className="text-gray-400 bg-gray-800 w-full p-6">
-            Board View Content
-            <div className="flex flex-row gap-6">
-                {statusList.map((val, index) => {
-                    return (
+            <div className="flex flex-row">
+                {statusList.map((val, index) => 
+                    (
                         <StatusBoard key={index} status={val} taskList={taskList} />
                     )
-                })}
-                <PrimaryButton onClick={handleNewStatusBoard}>
-                    Add Section
-                </PrimaryButton>
+                )}
             </div>
         </div>
     )

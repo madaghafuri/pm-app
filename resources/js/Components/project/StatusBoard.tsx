@@ -1,45 +1,67 @@
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { TaskItem } from "./TaskItem";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, UniqueIdentifier } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, UniqueIdentifier, useDndMonitor } from "@dnd-kit/core";
 import { useState } from "react";
+import { Status, Task, useProjectContext } from "@/Pages/Project/ProjectContext";
+import { MoreHorizontal, Plus } from "lucide-react";
+import SecondaryButton from "../SecondaryButton";
 
 type StatusBoardProps = {
-    taskList: any[];
-    status: string;
+    taskList: Task[];
+    status: Status;
 }
 
 export function StatusBoard({ taskList, status }: StatusBoardProps) {
+    const { setTaskList, } = useProjectContext();
+
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+    const activeTask = activeId ? taskList.find((value) => value.id === activeId) : null;
 
     const handleDragStart = ({ active }: DragStartEvent) => {
         setActiveId(active.id);
-        console.log(active);
     }
 
     const handleDragEnd = ({ active, over }: DragEndEvent) => {
         if (active.id !== over?.id) {
-            const oldIndex = taskList.indexOf(active.id);
-            const newIndex = taskList.indexOf(over?.id);
-
-            return arrayMove(taskList, oldIndex, newIndex);
+            const oldIndex = taskList.findIndex((task) => task.id === active.id);
+            const newIndex = taskList.findIndex((task) => task.id === over?.id);
+            
+            setTaskList((prevTaskList) => arrayMove(prevTaskList, oldIndex, newIndex));
         }
+        setActiveId(null);
     }
 
-    return <div>
-        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-            <h1 className="select-none">{status}</h1>
-            <SortableContext items={taskList} strategy={verticalListSortingStrategy}>
-                <div className="flex flex-col gap-2">
-                    {taskList.map((value, index) => {
-                        return (
-                            <TaskItem key={index} id={index} name={value} />
-                        )
-                    })}
+    const handleDragOver = ({ active, over }: DragOverEvent) => {
+        console.log({ active, over });
+    }
+
+    return (
+        <DndContext id={status.id} onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver}>
+            <div className="p-4 rounded-md hover:outline hover:outline-1 hover:outline-gray-400">
+                <div className="flex mb-5 justify-between items-center">
+                    <h1 className="select-none font-bold text-xl">{status.title}</h1>
+                    <div>
+                        <SecondaryButton spacing="xs" className="border-none h-4">
+                            <Plus />
+                        </SecondaryButton>
+                        <SecondaryButton spacing="xs" className="border-none h-4">
+                            <MoreHorizontal />
+                        </SecondaryButton>
+                    </div>
                 </div>
-            </SortableContext>
-            <DragOverlay>
-                <TaskItem id={activeId as UniqueIdentifier} name="Dragging" />
-            </DragOverlay>
+                <SortableContext items={taskList} strategy={verticalListSortingStrategy}>
+                    <div className="flex flex-col gap-2">
+                        {taskList.map((value) => 
+                            (
+                                <TaskItem key={value.id} id={value.id} name={value.title} />
+                            )
+                        )}
+                    </div>
+                </SortableContext>
+                <DragOverlay>
+                    {activeId ? <TaskItem id={activeId as UniqueIdentifier} name={activeTask?.title as string} /> : null}
+                </DragOverlay>
+            </div>
         </DndContext>
-    </div>
+    )
 }
